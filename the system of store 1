@@ -1,0 +1,123 @@
+#include<iostream>
+#include<conio.h>
+using namespace std;
+void input(struct student *p1);
+void average(struct student *p, float *b,int a);
+void max(struct student *p, struct  student **k);
+void sort(struct student *pHead);
+void output(struct student *p);
+void find( struct student *p);
+int quit();
+struct  student{
+	char name[20];
+	int number;
+	float score[4];
+	struct student *p1;
+}*head, *p, *q;
+int main()
+{
+	int  i=1; float b[3] = { 0 };
+	head = new student;
+	struct  student **k = &head;
+	p = new student; head->p1 = p;
+	cout << "分别输入各位学生的姓名，学号，三科成绩" << endl;
+	input(p);
+	while (1)
+	{
+		i++;
+		q = new student;
+		p->p1 = q;
+		p = q;
+		if(quit()==0)
+		break;
+	}
+	system("CLS");
+	p->p1 = NULL;
+	p = head->p1;
+	sort(head);
+	average(p, b,i);
+	find( p);
+	max(p, k);
+	cout << "三门平均分别为：" << b[0] << " ," << b[1] << " ," << b[2] << endl;
+	p = *k;
+	cout << "最高分信息： " << "名字 " << p->name << "   学号 " << p->number << "  成绩：" << p->score[0] << "，" << p->score[1] << "，" << p->score[2]<<endl;
+	cout << " 分数表 " << endl; p = head->p1;
+	output(p);
+}
+void input(struct student *p)
+{
+	cin >> p->name >> p->number >> p->score[0] >> p->score[1] >> p->score[2];
+	p->score[3] = p->score[0] + p->score[1] + p->score[2];
+}
+void average(struct student *p, float *b,int a)
+{
+
+	while (p->p1 != NULL)
+	{
+		*b += p->score[0]; *(b + 1) += p->score[1]; *(b + 2) += p->score[2];
+		p = p->p1;
+	}
+	*b /= a; *(b + 1) /= a; *(b + 2) /= a;
+}
+void max(struct student *p, struct  student **k)
+{
+	float max = p->score[0] + p->score[1] + p->score[2];
+	while (p->p1!=NULL)
+	{
+		if (max <= p->score[0] + p->score[1] + p->score[2])
+		{
+			max = p->score[0] + p->score[1] + p->score[2]; *k = p;
+		}
+		p = p->p1;
+	}
+}
+int quit()
+{
+	char ch = 'd'; static int i = 2;
+	cout << "按v键停止输入,按任意键继续输入";
+	ch = _getch();
+	if (ch == 'v')
+		return 0;
+	system("CLS"); cout << "输入第"<<i<<"各位学生的姓名，学号，三科成绩" << endl;
+	input(p); i++;
+}
+void find(struct student *p)
+{
+	int a,k;
+	cout<< "若大于分界数则按1，小于按0"<<endl; cin >> k;
+	cout << "分界数: "; cin >> a;
+	system("CLS"); cout << "符合条件的数：";
+	while (p->p1 != NULL)
+	{
+		if ((p->score[0] + p->score[1] + p->score[2] > a)&&k)
+			cout << p->name << " ";
+		if (k == 0 &&( p->score[0] + p->score[1] + p->score[2] < a))
+			cout << p->name << " ";
+		cout << ",";
+		p = p->p1;
+	}cout << endl;
+}
+void sort(struct student *pHead)
+{
+	struct student *pCurrent, *pTemp,*temp;
+	for (pCurrent = pHead->p1; pCurrent != NULL; pCurrent = pCurrent->p1)
+	{
+		for (pTemp = pCurrent->p1; pTemp != NULL;pTemp= pTemp->p1)
+		{
+			if (pCurrent->score[3] < pTemp->score[3])
+			{
+				swap(pCurrent->name, pTemp->name);
+				swap(pCurrent->number, pTemp->number);
+				swap(pCurrent->score, pTemp->score);
+			}
+		}
+	}
+}
+void output(struct student *p)
+{
+	while (p->p1 != NULL)
+	{
+		cout << p->name << "  " << p->score[3] << endl;
+		p = p->p1;
+	}
+}
